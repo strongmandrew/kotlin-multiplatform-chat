@@ -1,26 +1,43 @@
 package com.strongmandrew.application.ws
 
-import com.strongmandrew.application.ChatFlow
+import entity.ChatUser
+import entity.UserAuthCompleted
 import io.ktor.server.websocket.*
 import io.ktor.websocket.*
-import kotlinx.coroutines.flow.dropWhile
-import kotlinx.coroutines.flow.filterIsInstance
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.isActive
+import java.util.*
 
-class WebsocketManager<T : Any>(
-    private val chatFlow: ChatFlow
-) {
+class WebsocketManager {
 
-    private val sessions: MutableList<WebSocketServerSession> = mutableListOf()
+    private val users = mutableMapOf<String, ChatUser>()
+    val sessions: MutableList<WebSocketServerSession> = mutableListOf()
 
-    suspend fun connect(session: WebSocketServerSession) {
+    suspend fun connect(user: ChatUser, session: WebSocketServerSession) {
+        val userAuthCompleted = register(user).let(::UserAuthCompleted)
+
         sessions += session
+
+        session.sendSerialized(userAuthCompleted)
     }
 
-    fun send(event: T) {
-        sessions.forEach { session ->
+    suspend inline fun <reified T> send(event: T) {
+        val lostConnections = mutableListOf<WebSocketSession>()
 
+        sessions.forEach { session ->
+            if (session.isActive) {
+                session.sendSerialized(event)
+            } else {
+                lostConnections += session
+            }
+        }
+
+        lostConnections.forEach { session ->
+            session.close(CloseReason(CloseReason.Codes.NORMAL, "Закрытие"))
         }
     }
+
+    private fun register(user: ChatUser): String =
+        UUID.randomUUID().toString().also { uuid -> users += uuid to user }
+
+    fun getByUuid(uuid: String): ChatUser? = users[uuid]
 }

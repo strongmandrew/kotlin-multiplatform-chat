@@ -1,14 +1,18 @@
 package entity
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 sealed class ChatEvent
 
+@Serializable
 data class UserAuthCompleted(
     val userUuid: String,
-    val latestMessages: List<ChatMessage>
 ) : ChatEvent()
 
+@Serializable
 data class SendChatMessage(
-    private val userUuid: String,
-    private val content: String,
+    val userUuid: String,
+    val content: String,
 ) : ChatEvent()
 

@@ -1,8 +1,12 @@
 val kotlinCoroutinesVersion: String by project
-val ktorWebsocketsVersion: String by project
+val kotlinSerializationVersion: String by project
+val ktorVersion: String by project
+val slf4jVersion: String by project
+val log4jVersion: String by project
 
 plugins {
     kotlin("multiplatform") version "1.9.0"
+    kotlin("plugin.serialization") version "1.9.0"
     application
 }
 
@@ -37,8 +41,9 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation("io.ktor:ktor-websockets:$ktorWebsocketsVersion")
+                implementation("io.ktor:ktor-websockets:$ktorVersion")
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinCoroutinesVersion")
+                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinSerializationVersion")
             }
         }
         val commonTest by getting {
@@ -48,8 +53,14 @@ kotlin {
         }
         val jvmMain by getting {
             dependencies {
-                implementation("io.ktor:ktor-server-websockets-jvm:$ktorWebsocketsVersion")
-                implementation("io.ktor:ktor-websocket-serialization:$ktorWebsocketsVersion")
+                implementation("io.ktor:ktor-server-websockets-jvm:$ktorVersion")
+
+                implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
+
+                implementation("org.slf4j:slf4j-api:$slf4jVersion")
+                implementation("org.slf4j:slf4j-reload4j:$slf4jVersion")
+
+                implementation("org.apache.logging.log4j:log4j-core:$log4jVersion")
 
                 implementation("io.ktor:ktor-server-netty:2.3.2")
                 implementation("io.ktor:ktor-server-html-builder-jvm:2.3.2")

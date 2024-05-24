@@ -1,6 +1,7 @@
 package com.strongmandrew.application
 
 import entity.ChatMessage
+import io.ktor.server.application.*
 import kotlinx.coroutines.flow.MutableSharedFlow
 
 class ChatFlow(replayCache: Int) {
@@ -15,3 +16,6 @@ class ChatFlow(replayCache: Int) {
         replay = replayCache
     )
 }
+
+fun ChatFlow.Companion.fromEnvironment(environment: ApplicationEnvironment): ChatFlow =
+    environment.config.toMap()["replay.size"].toString().toIntOrNull().let(::ChatFlow)
