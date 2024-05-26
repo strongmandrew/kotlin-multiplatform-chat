@@ -1,10 +1,12 @@
 package com.strongmandrew.application.ws
 
+import entity.ChatEvent
 import entity.ChatUser
 import entity.UserAuthCompleted
 import io.ktor.server.websocket.*
 import io.ktor.websocket.*
 import kotlinx.coroutines.isActive
+import kotlinx.serialization.json.Json
 import java.util.*
 
 class WebsocketManager {
@@ -17,15 +19,29 @@ class WebsocketManager {
 
         sessions += session
 
-        session.sendSerialized(userAuthCompleted)
+        session.send(
+            Frame.Text(
+                Json.encodeToString(
+                    serializer = ChatEvent.serializer(),
+                    value = userAuthCompleted
+                )
+            )
+        )
     }
 
-    suspend inline fun <reified T> send(event: T) {
+    suspend fun <T : ChatEvent> send(event: T) {
         val lostConnections = mutableListOf<WebSocketSession>()
 
         sessions.forEach { session ->
             if (session.isActive) {
-                session.sendSerialized(event)
+                session.send(
+                    Frame.Text(
+                        Json.encodeToString(
+                            serializer = ChatEvent.serializer(),
+                            value = event
+                        )
+                    )
+                )
             } else {
                 lostConnections += session
             }

@@ -5,7 +5,6 @@ import entity.ChatEvent
 import entity.ChatMessage
 import entity.ChatUser
 import entity.SendChatMessage
-import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.html.*
@@ -47,8 +46,8 @@ private fun Application.module() {
 
     installWs()
     routing {
-        get("/") {
-            call.respondHtml(HttpStatusCode.OK) {
+        get {
+            call.respondHtml {
                 index()
             }
         }
@@ -57,9 +56,8 @@ private fun Application.module() {
             val queryParams = call.request.queryParameters.toMap()
 
             val name = queryParams["name"]?.firstOrNull() ?: return@webSocket
-            val surname = queryParams["surname"]?.firstOrNull() ?: return@webSocket
 
-            val chatUser = ChatUser(name, surname)
+            val chatUser = ChatUser(name)
 
             websocketManager.connect(chatUser, this)
 

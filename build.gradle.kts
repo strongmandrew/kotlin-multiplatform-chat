@@ -31,6 +31,9 @@ kotlin {
     js {
         binaries.executable()
         browser {
+            runTask {
+                devServer = devServer?.copy(port = 3000)
+            }
             commonWebpackConfig {
                 cssSupport {
                     enabled.set(true)
@@ -42,6 +45,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 implementation("io.ktor:ktor-websockets:$ktorVersion")
+                implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinCoroutinesVersion")
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinSerializationVersion")
             }
@@ -54,8 +58,6 @@ kotlin {
         val jvmMain by getting {
             dependencies {
                 implementation("io.ktor:ktor-server-websockets-jvm:$ktorVersion")
-
-                implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
 
                 implementation("org.slf4j:slf4j-api:$slf4jVersion")
                 implementation("org.slf4j:slf4j-reload4j:$slf4jVersion")
@@ -70,6 +72,8 @@ kotlin {
         val jvmTest by getting
         val jsMain by getting {
             dependencies {
+                implementation("io.ktor:ktor-client-js-js:$ktorVersion")
+
                 implementation("org.jetbrains.kotlin-wrappers:kotlin-react:18.2.0-pre.346")
                 implementation("org.jetbrains.kotlin-wrappers:kotlin-react-dom:18.2.0-pre.346")
                 implementation("org.jetbrains.kotlin-wrappers:kotlin-emotion:11.9.3-pre.346")
