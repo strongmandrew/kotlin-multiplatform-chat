@@ -1,13 +1,12 @@
 package com.strongmandrew.application
 
 import com.strongmandrew.application.ws.WebsocketManager
-import entity.ChatEvent
-import entity.ChatMessage
 import entity.ChatUser
-import entity.SendChatMessage
+import entity.ClientEvent
+import entity.SendMessage
+import entity.SentMessage
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
-import io.ktor.server.html.*
 import io.ktor.server.netty.*
 import io.ktor.server.routing.*
 import io.ktor.server.websocket.*
@@ -47,9 +46,7 @@ private fun Application.module() {
     installWs()
     routing {
         get {
-            call.respondHtml {
-                index()
-            }
+
         }
 
         webSocket("/chat") {
@@ -68,10 +65,10 @@ private fun Application.module() {
             incoming.consumeAsFlow().filterIsInstance<Frame.Text>().map { frame ->
                 val frameText = frame.readText()
                 LoggerFactory.getLogger(this::class.java).info(frameText)
-                Json.decodeFromString<ChatEvent>(frameText)
-            }.filterIsInstance<SendChatMessage>().mapNotNull { sendMessage ->
+                Json.decodeFromString<ClientEvent>(frameText)
+            }.filterIsInstance<SendMessage>().mapNotNull { sendMessage ->
                 val actualUser = websocketManager.getByUuid(sendMessage.userUuid) ?: return@mapNotNull null
-                ChatMessage(actualUser, sendMessage.content)
+                SentMessage(actualUser, sendMessage.content)
             }.collect(chatFlow.messages)
         }
     }

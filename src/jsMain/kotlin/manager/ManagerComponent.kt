@@ -6,8 +6,9 @@ import csstype.Display
 import csstype.JustifyContent
 import csstype.vh
 import emotion.react.css
-import entity.ChatMessage
-import entity.UserAuthCompleted
+import entity.AuthCompleted
+import entity.SendMessage
+import entity.SentMessage
 import kotlinx.browser.sessionStorage
 import react.FC
 import react.Props
@@ -21,16 +22,14 @@ val Manager = FC<Props> {
 
     val wsClient = WebsocketClient { event ->
         when (event) {
-            is UserAuthCompleted -> {
+            is AuthCompleted -> {
                 sessionStorage.setItem("userUuid", event.userUuid)
                 setCurrentUserUuid(event.userUuid)
             }
 
-            is ChatMessage -> {
+            is SentMessage -> {
                 console.log("Сообщение от ${event.user} содержания ${event.content}")
             }
-
-            else -> {}
         }
     }
 
@@ -52,7 +51,15 @@ val Manager = FC<Props> {
                 setCurrentUserUuid(null)
             }
         }
-        Chat()
+        Chat {
+            onSendMessage = {
+                val sendMessageEvent = SendMessage(
+                    userUuid = currentUserUuid.orEmpty(),
+                    content = it
+                )
+                wsClient.send(sendMessageEvent)
+            }
+        }
     }
 
 

@@ -9,8 +9,15 @@ import react.dom.html.ReactHTML.button
 import react.dom.html.ReactHTML.div
 import react.dom.html.ReactHTML.h2
 import react.dom.html.ReactHTML.input
+import react.useRef
 
-val Chat = FC<Props> {
+external interface ChatProps : Props {
+    var onSendMessage: (input: String) -> Unit
+}
+
+val Chat = FC<ChatProps> { props ->
+
+    val message = useRef("")
 
     div {
         css {
@@ -44,6 +51,9 @@ val Chat = FC<Props> {
                 }
                 type = InputType.text
                 placeholder = "Напишите сообщение..."
+                onChange = { event ->
+                    message.current = event.target.value
+                }
             }
 
             button {
@@ -52,6 +62,12 @@ val Chat = FC<Props> {
                     margin = 25.px
                     flex = Flex(number(0.0), number(1.0), 3.pct)
                 }
+
+                onClick = {
+                    props.onSendMessage(message.current.orEmpty())
+                }
+
+                +"Send"
             }
         }
     }

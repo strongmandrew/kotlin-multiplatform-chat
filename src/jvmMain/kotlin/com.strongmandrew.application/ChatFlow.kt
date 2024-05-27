@@ -1,6 +1,6 @@
 package com.strongmandrew.application
 
-import entity.ChatMessage
+import entity.SentMessage
 import io.ktor.server.application.*
 import kotlinx.coroutines.flow.MutableSharedFlow
 
@@ -12,7 +12,7 @@ class ChatFlow(replayCache: Int) {
         const val DEFAULT_REPLAY_SIZE = 10
     }
 
-    val messages = MutableSharedFlow<ChatMessage>(
+    val messages = MutableSharedFlow<SentMessage>(
         replay = replayCache
     )
 }

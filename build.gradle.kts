@@ -28,8 +28,7 @@ kotlin {
             }
         }
     }
-    js {
-        useCommonJs()
+    js(IR) {
         binaries.executable()
         browser {
             runTask {
