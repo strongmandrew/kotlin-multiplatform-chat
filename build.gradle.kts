@@ -29,10 +29,15 @@ kotlin {
         }
     }
     js {
+        useCommonJs()
         binaries.executable()
         browser {
             runTask {
-                devServer = devServer?.copy(port = 3000)
+                devServer?.run {
+                    //proxy = mutableMapOf("/" to "http://localhost:8080/")
+                    port = 3000
+                    //static = mutableListOf("$buildDir/processedResources/frontend/main")
+                }
             }
             commonWebpackConfig {
                 cssSupport {

@@ -1,8 +1,7 @@
 package auth
 
 import component.AuthButton
-import csstype.Display
-import csstype.pct
+import csstype.*
 import emotion.react.css
 import react.FC
 import react.Props
@@ -23,8 +22,10 @@ val Auth = FC<AuthProps> { props ->
 
     div {
         css {
-            display = Display.grid
-            gridAutoColumns = 33.pct
+            flex = Flex(number(0.0), number(1.0), 30.pct)
+            display = Display.flex
+            flexDirection = FlexDirection.column
+            justifyContent = JustifyContent.center
         }
 
         input {
@@ -36,20 +37,29 @@ val Auth = FC<AuthProps> { props ->
             }
         }
 
-        AuthButton {
-            disabled = props.authenticated
-            onClick = {
-                props.onEnter(name.current.orEmpty())
+        div {
+            css {
+                display = Display.flex
+                justifyContent = JustifyContent.spaceAround
+                flexDirection = FlexDirection.row
             }
-            text = "Войти"
+
+            AuthButton {
+                disabled = props.authenticated
+                onClick = {
+                    props.onEnter(name.current.orEmpty())
+                }
+                text = "Войти"
+            }
+
+            AuthButton {
+                disabled = !props.authenticated
+                onClick = {
+                    props.onExit()
+                }
+                text = "Выйти"
+            }
         }
 
-        AuthButton {
-            disabled = !props.authenticated
-            onClick = {
-                props.onExit()
-            }
-            text = "Выйти"
-        }
     }
 }

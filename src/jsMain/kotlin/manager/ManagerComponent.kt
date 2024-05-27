@@ -2,11 +2,16 @@ package manager
 
 import auth.Auth
 import chat.Chat
+import csstype.Display
+import csstype.JustifyContent
+import csstype.vh
+import emotion.react.css
 import entity.ChatMessage
 import entity.UserAuthCompleted
 import kotlinx.browser.sessionStorage
 import react.FC
 import react.Props
+import react.dom.html.ReactHTML.div
 import react.useState
 import ws.WebsocketClient
 
@@ -29,16 +34,26 @@ val Manager = FC<Props> {
         }
     }
 
-    Auth {
-        authenticated = currentUserUuid != null
-        onEnter = {
-            wsClient.connect(it)
+    div {
+        css {
+            display = Display.flex
+            height = 100.vh
+            justifyContent = JustifyContent.spaceBetween
         }
-        onExit = {
-            wsClient.close()
-            sessionStorage.removeItem("userUuid")
-            setCurrentUserUuid(null)
+
+        Auth {
+            authenticated = currentUserUuid != null
+            onEnter = {
+                wsClient.connect(it)
+            }
+            onExit = {
+                wsClient.close()
+                sessionStorage.removeItem("userUuid")
+                setCurrentUserUuid(null)
+            }
         }
+        Chat()
     }
-    Chat()
+
+
 }
