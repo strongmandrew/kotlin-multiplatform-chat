@@ -23,4 +23,5 @@ data class AuthCompleted(
 data class SentMessage(
     val user: ChatUser,
     val content: String,
+    val timestamp: Long
 ): ServerEvent()

@@ -11,7 +11,7 @@ import react.dom.html.ReactHTML.input
 import react.useRef
 
 external interface AuthProps : Props {
-    var authenticated: Boolean
+    var currentUsername: String?
     var onEnter: (name: String) -> Unit
     var onExit: () -> Unit
 }
@@ -29,9 +29,9 @@ val Auth = FC<AuthProps> { props ->
         }
 
         input {
-            this.disabled = props.authenticated
+            this.disabled = props.currentUsername != null
             this.type = InputType.text
-            this.placeholder = "Введите своё имя: "
+            this.placeholder = props.currentUsername ?: "Введите своё имя: "
             this.onChange = {
                 name.current = it.target.value
             }
@@ -42,10 +42,12 @@ val Auth = FC<AuthProps> { props ->
                 display = Display.flex
                 justifyContent = JustifyContent.spaceAround
                 flexDirection = FlexDirection.row
+
+                margin = 20.px
             }
 
             AuthButton {
-                disabled = props.authenticated
+                disabled = props.currentUsername != null
                 onClick = {
                     props.onEnter(name.current.orEmpty())
                 }
@@ -53,7 +55,7 @@ val Auth = FC<AuthProps> { props ->
             }
 
             AuthButton {
-                disabled = !props.authenticated
+                disabled = props.currentUsername == null
                 onClick = {
                     props.onExit()
                 }
