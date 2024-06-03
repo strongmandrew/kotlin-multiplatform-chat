@@ -49,7 +49,9 @@ val Message = FC<MessageProps> { props ->
                 flex = Flex(number(0.0), number(1.0), 20.pct)
             }
 
-            +Date(props.timestamp).toDateString()
+            +Date(props.timestamp).run {
+                "${toLocaleDateString()} ${toLocaleTimeString()}"
+            }
         }
     }
 }

@@ -33,9 +33,7 @@ kotlin {
         browser {
             runTask {
                 devServer?.run {
-                    //proxy = mutableMapOf("/" to "http://localhost:8080/")
                     port = 3000
-                    //static = mutableListOf("$buildDir/processedResources/frontend/main")
                 }
             }
             commonWebpackConfig {
@@ -99,4 +97,8 @@ tasks.named<Copy>("jvmProcessResources") {
 tasks.named<JavaExec>("run") {
     dependsOn(tasks.named<Jar>("jvmJar"))
     classpath(tasks.named<Jar>("jvmJar"))
+}
+
+tasks.register("runAll") {
+
 }

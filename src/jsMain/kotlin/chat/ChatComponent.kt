@@ -98,7 +98,7 @@ val Chat = FC<ChatProps> { props ->
                 }
 
                 onClick = {
-                    props.onSendMessage(message.current.orEmpty())
+                    message.current?.takeUnless(String::isBlank)?.let(props.onSendMessage)
                 }
 
                 disabled = props.disabled

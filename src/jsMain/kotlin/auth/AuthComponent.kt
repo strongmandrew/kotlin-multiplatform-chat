@@ -10,6 +10,8 @@ import react.dom.html.ReactHTML.div
 import react.dom.html.ReactHTML.input
 import react.useRef
 
+private const val NONE_USERNAME = "Аноним"
+
 external interface AuthProps : Props {
     var currentUsername: String?
     var onEnter: (name: String) -> Unit
@@ -49,7 +51,7 @@ val Auth = FC<AuthProps> { props ->
             AuthButton {
                 disabled = props.currentUsername != null
                 onClick = {
-                    props.onEnter(name.current.orEmpty())
+                    props.onEnter(name.current?.ifBlank(::NONE_USERNAME) ?: NONE_USERNAME)
                 }
                 text = "Войти"
             }
